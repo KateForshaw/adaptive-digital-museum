@@ -1,0 +1,11 @@
+{
+    "description": "Phase 4 - AE5 fixture (Testing Plans.docx > 'Simulate broad browsing'). Each entry is one simulated artefact click, played in order into event_log by tests/phase4/adaptive_engine_test.php against a throwaway session. Alternates between both themes (Animals / Everyday Objects) across 6 different subthemes on purpose, so the resulting session context is genuinely broad rather than settled on one interest - real artefact_ids aren't hard-coded here, only subtheme_name, so the test picks whichever real artefact currently exists in that subtheme.",
+    "events": [
+        { "subtheme_name": "Mammals" },
+        { "subtheme_name": "Tools" },
+        { "subtheme_name": "Fossils" },
+        { "subtheme_name": "Clothing" },
+        { "subtheme_name": "Insects" },
+        { "subtheme_name": "Household Items" }
+    ]
+}

@@ -1,0 +1,11 @@
+response_id,session_id,item_id,item_text,response_value,response_timestamp
+31,39,1,"Which version did you complete first?","Adaptive version","2026-07-29 08:11:46"
+32,39,2,"The artefacts shown in static version felt relevant to my interests.",3,"2026-07-29 08:11:46"
+33,39,3,"I encountered artefacts in the static version that were unexpected or surprising.",3,"2026-07-29 08:11:46"
+34,39,4,"The static version allowed me to explore freely without feeling restricted.",3,"2026-07-29 08:11:46"
+35,39,5,"Overall, my experience using the static version was positive.",3,"2026-07-29 08:11:46"
+36,39,7,"The artefacts shown in adaptive version felt relevant to my interests.",3,"2026-07-29 08:11:46"
+37,39,8,"I encountered artefacts in the adaptive version that were unexpected or surprising.",3,"2026-07-29 08:11:46"
+38,39,9,"The adaptive version allowed me to explore freely without feeling restricted.",3,"2026-07-29 08:11:46"
+39,39,10,"Overall, my experience using the adaptive version was positive.",3,"2026-07-29 08:11:46"
+40,39,12,"Which version did you prefer overall?","No preference","2026-07-29 08:11:46"

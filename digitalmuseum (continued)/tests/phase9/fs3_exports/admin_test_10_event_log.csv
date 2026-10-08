@@ -1,0 +1,7 @@
+event_id,session_id,artefact_id,suggestion_id,rule_id,event_type,timestamp,dwell_duration,navigation_depth
+2421,49,,,,session_start,"2026-08-03 07:53:08",,
+2422,49,53,,,click,"2026-08-03 07:53:13",,
+2423,49,53,,,navigation_depth,"2026-08-03 07:53:13",,1
+2424,49,53,,,dwell_start,"2026-08-03 07:53:13",,
+2425,49,53,,,dwell_end,"2026-08-03 07:53:22",9,
+2426,49,,,,session_end,"2026-08-03 07:53:44",,

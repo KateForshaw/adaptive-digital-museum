@@ -1,0 +1,3 @@
+timeout_id,session_id,version_name,timeout_timestamp,auto_redirect_flag,timeout_notes
+21,44,static,"2026-08-01 09:05:28",1,
+22,44,adaptive,"2026-08-01 09:12:56",1,

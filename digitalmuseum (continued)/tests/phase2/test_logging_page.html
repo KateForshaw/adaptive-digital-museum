@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Phase 2 - Behaviour Logging Test Page</title>
+<!--
+=======================================================================
+Digital Museum Research Project
+Phase 2 - Behaviour Logging Engine
+tests/phase2/test_logging_page.html
+
+Phased Build Plan.docx > Phase 2 > Steps > "Create a simple test page:
+One button -> logs a click event; One modal -> logs dwell_start +
+dwell_end; Console output for debugging."
+
+This is the manual browser test page referenced as a required "Tool"
+in Testing Plans.docx > Phase 2 Testing Plan. Unlike the automated
+tests/phase2/test_*.php scripts (which call the API endpoints directly
+via cURL), this page drives the real frontend client - js/logging.js
+and js/timeout.js - through genuine browser interaction. That's the
+only way to test navigation depth counting, revisit detection, and
+dwell-duration timing, since all of that logic lives client-side in
+logging.js, not on the server.
+
+Re-exercises, through the real frontend:
+  BL1  click event logging
+  BL2  dwell_start + dwell_end
+  BL3  navigation depth
+  BL4  revisit detection
+  BL5  session_start
+  BL6  timeout event (manual trigger button, does not redirect)
+
+Uses artefact_id 1, 2, 3 directly - these exist once insert_metadata.sql
+has been run (it resets the artefact table and re-inserts 60 rows in
+order, so IDs 1-3 are always the first 3 seeded artefacts).
+=======================================================================
+-->
+<style>
+    body {
+        font-family: -apple-system, Arial, sans-serif;
+        max-width: 900px;
+        margin: 2rem auto;
+        padding: 0 1rem;
+        color: #222;
+    }
+    h1 { font-size: 1.4rem; }
+    h2 { font-size: 1.1rem; margin-top: 2rem; border-bottom: 1px solid #ccc; padding-bottom: 0.25rem; }
+    section { margin-bottom: 1.5rem; }
+    button {
+        padding: 0.5rem 0.9rem;
+        margin: 0.25rem 0.5rem 0.25rem 0;
+        cursor: pointer;
+    }
+    button:disabled { cursor: not-allowed; opacity: 0.5; }
+    input, select {
+        padding: 0.4rem;
+        margin-right: 0.5rem;
+    }
+    .artefact-card {
+        display: inline-block;
+        border: 1px solid #ccc;
+        border-radius: 6px;
+        padding: 0.75rem;
+        margin: 0 0.5rem 0.5rem 0;
+        vertical-align: top;
+    }
+    #status {
+        background: #f4f4f4;
+        border: 1px solid #ddd;
+        border-radius: 6px;
+        padding: 0.75rem 1rem;
+        font-family: monospace;
+        font-size: 0.9rem;
+    }
+    #log {
+        background: #111;
+        color: #0f0;
+        font-family: monospace;
+        font-size: 0.8rem;
+        padding: 0.75rem;
+        height: 260px;
+        overflow-y: auto;
+        white-space: pre-wrap;
+        border-radius: 6px;
+    }
+    .modal-overlay {
+        display: none;
+        position: fixed;
+        inset: 0;
+        background: rgba(0, 0, 0, 0.5);
+        align-items: center;
+        justify-content: center;
+    }
+    .modal-overlay.open { display: flex; }
+    .modal-box {
+        background: #fff;
+        padding: 1.5rem;
+        border-radius: 8px;
+        min-width: 280px;
+    }
+</style>
+</head>
+<body>
+
+<h1>Phase 2 - Behaviour Logging Test Page</h1>
+<p>Drives <code>js/logging.js</code> and <code>js/timeout.js</code> through real browser interaction (BL1-BL6). Open your browser console and/or network inspector alongside the log panel below.</p>
+
+<section>
+    <h2>Session</h2>
+    <div>
+        <input type="text" id="participantCodeInput" placeholder="participant code" maxlength="20">
+        <select id="conditionSelect">
+            <option value="static_first">static_first</option>
+            <option value="adaptive_first">adaptive_first</option>
+        </select>
+        <button id="startSessionBtn">Start Session (BL5)</button>
+        <button id="endSessionBtn" disabled>End Session</button>
+    </div>
+    <div id="status">No active session.</div>
+</section>
+
+<section>
+    <h2>Artefacts</h2>
+    <div class="artefact-card">
+        <p><strong>Artefact 1</strong></p>
+        <button class="clickBtn" data-artefact="1" disabled>Click (BL1)</button>
+        <button class="openBtn" data-artefact="1" disabled>Open Modal (BL2/BL3/BL4)</button>
+    </div>
+    <div class="artefact-card">
+        <p><strong>Artefact 2</strong></p>
+        <button class="clickBtn" data-artefact="2" disabled>Click (BL1)</button>
+        <button class="openBtn" data-artefact="2" disabled>Open Modal (BL2/BL3/BL4)</button>
+    </div>
+    <div class="artefact-card">
+        <p><strong>Artefact 3</strong></p>
+        <button class="clickBtn" data-artefact="3" disabled>Click (BL1)</button>
+        <button class="openBtn" data-artefact="3" disabled>Open Modal (BL2/BL3/BL4)</button>
+    </div>
+    <p style="font-size:0.85rem;color:#666;">
+        Open artefact 1 twice (in separate modal opens) to trigger a revisit (BL4).
+        Open 1 -> 2 -> 3 in sequence to watch navigation depth increment (BL3).
+    </p>
+</section>
+
+<section>
+    <h2>Timeout (manual trigger, does not redirect)</h2>
+    <button id="timeoutStaticBtn" disabled>Trigger Static Timeout (BL6)</button>
+    <button id="timeoutAdaptiveBtn" disabled>Trigger Adaptive Timeout (BL6)</button>
+</section>
+
+<section>
+    <h2>Console output for debugging</h2>
+    <div id="log"></div>
+</section>
+
+<div class="modal-overlay" id="modalOverlay">
+    <div class="modal-box">
+        <p>Viewing <strong id="modalArtefactLabel"></strong></p>
+        <p style="font-size:0.85rem;color:#666;">Dwell timer is running - close whenever you like to log dwell_end.</p>
+        <button id="closeModalBtn">Close Modal</button>
+    </div>
+</div>
+
+<script src="/digitalmuseum/js/logging.js"></script>
+<script src="/digitalmuseum/js/timeout.js"></script>
+<script>
+    // -----------------------------------------------------------------
+    // On-page log panel - mirrors console.log/debug/error so the test
+    // page is self-contained even without devtools open.
+    // -----------------------------------------------------------------
+    const logEl = document.getElementById('log');
+    function logLine(label, ...args) {
+        const line = `[${new Date().toLocaleTimeString()}] ${label} ${args.map(a => typeof a === 'object' ? JSON.stringify(a) : a).join(' ')}`;
+        logEl.textContent += line + '\n';
+        logEl.scrollTop = logEl.scrollHeight;
+    }
+    ['debug', 'log', 'warn', 'error'].forEach((level) => {
+        const original = console[level].bind(console);
+        console[level] = (...args) => {
+            original(...args);
+            logLine(level.toUpperCase(), ...args);
+        };
+    });
+
+    // -----------------------------------------------------------------
+    // Element refs
+    // -----------------------------------------------------------------
+    const statusEl            = document.getElementById('status');
+    const participantCodeInput = document.getElementById('participantCodeInput');
+    const conditionSelect      = document.getElementById('conditionSelect');
+    const startSessionBtn      = document.getElementById('startSessionBtn');
+    const endSessionBtn        = document.getElementById('endSessionBtn');
+    const clickButtons         = document.querySelectorAll('.clickBtn');
+    const openButtons          = document.querySelectorAll('.openBtn');
+    const timeoutStaticBtn     = document.getElementById('timeoutStaticBtn');
+    const timeoutAdaptiveBtn   = document.getElementById('timeoutAdaptiveBtn');
+    const modalOverlay         = document.getElementById('modalOverlay');
+    const modalArtefactLabel   = document.getElementById('modalArtefactLabel');
+    const closeModalBtn        = document.getElementById('closeModalBtn');
+
+    let currentArtefactId = null;
+
+    // Pre-fill a unique test participant code (participant_code is
+    // VARCHAR(20) - keep the prefix short)
+    participantCodeInput.value = 'TEST_PAGE_' + Date.now().toString().slice(-6);
+
+    function refreshStatus() {
+        const sessionId = MuseumLogging.getSessionId();
+        statusEl.textContent = sessionId
+            ? `session_id: ${sessionId}  |  navigation_depth: ${MuseumLogging.getNavigationDepth()}`
+            : 'No active session.';
+    }
+
+    function setSessionControlsEnabled(enabled) {
+        endSessionBtn.disabled = !enabled;
+        clickButtons.forEach(btn => { btn.disabled = !enabled; });
+        openButtons.forEach(btn => { btn.disabled = !enabled; });
+        timeoutStaticBtn.disabled = !enabled;
+        timeoutAdaptiveBtn.disabled = !enabled;
+        startSessionBtn.disabled = enabled;
+    }
+
+    // -----------------------------------------------------------------
+    // Session controls
+    // -----------------------------------------------------------------
+    startSessionBtn.addEventListener('click', async () => {
+        const code = participantCodeInput.value.trim();
+        const condition = conditionSelect.value;
+        if (!code) {
+            logLine('ERROR', 'Enter a participant code first.');
+            return;
+        }
+        const result = await MuseumLogging.startSession(code, condition);
+        if (result) {
+            setSessionControlsEnabled(true);
+        }
+        refreshStatus();
+    });
+
+    endSessionBtn.addEventListener('click', async () => {
+        await MuseumLogging.endSession();
+        setSessionControlsEnabled(false);
+        refreshStatus();
+    });
+
+    // -----------------------------------------------------------------
+    // BL1: click
+    // -----------------------------------------------------------------
+    clickButtons.forEach((btn) => {
+        btn.addEventListener('click', async () => {
+            const artefactId = parseInt(btn.dataset.artefact, 10);
+            await MuseumLogging.logClick(artefactId);
+        });
+    });
+
+    // -----------------------------------------------------------------
+    // BL2/BL3/BL4: open modal -> dwell_start + navigation_depth (+
+    // revisit if this artefact was already opened this session);
+    // close modal -> dwell_end
+    // -----------------------------------------------------------------
+    openButtons.forEach((btn) => {
+        btn.addEventListener('click', async () => {
+            currentArtefactId = parseInt(btn.dataset.artefact, 10);
+            modalArtefactLabel.textContent = `Artefact ${currentArtefactId}`;
+            modalOverlay.classList.add('open');
+            await MuseumLogging.openArtefact(currentArtefactId);
+            refreshStatus();
+        });
+    });
+
+    closeModalBtn.addEventListener('click', async () => {
+        modalOverlay.classList.remove('open');
+        if (currentArtefactId !== null) {
+            await MuseumLogging.closeArtefact(currentArtefactId);
+            currentArtefactId = null;
+        }
+    });
+
+    // -----------------------------------------------------------------
+    // BL6: manual timeout trigger (logs the event but does not
+    // redirect - MuseumTimeout.start()'s countdown is not used here so
+    // the test page stays usable)
+    // -----------------------------------------------------------------
+    timeoutStaticBtn.addEventListener('click', () => MuseumLogging.logTimeout('static'));
+    timeoutAdaptiveBtn.addEventListener('click', () => MuseumLogging.logTimeout('adaptive'));
+
+    logLine('INFO', 'Test page ready. Enter a participant code and click "Start Session" to begin.');
+</script>
+
+</body>
+</html>
