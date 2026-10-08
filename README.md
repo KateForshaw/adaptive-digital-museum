@@ -29,4 +29,5 @@ This was my research project for my Data Analytics MSc. It asked whether real-ti
 | `DC25259628appendices.docx` | Appendices: design diagrams, data dictionary, rule specifications, test results, analysis outputs and ethics documents |
 | `digitalmuseum_database.sql` | MySQL script to create the database with the artefact metadata, themes, adaptive rules and questionnaire items (participant data not included) |
 | `Artefact Metadata.xlsx` | Curated metadata for the 60 artefacts |
+| `Digital Museum Research Poster.png` | Research poster summarising the project's aims, method and key findings |
 | `digitalmuseum/` | Source code for the prototypes: participant-facing PHP pages, api/ endpoints, includes/ adaptive engine modules, js/ logging and adaptive scripts, css/ styling, config/ database connection, database/ setup scripts, tests/ for each build phase and exports/ data export script |
