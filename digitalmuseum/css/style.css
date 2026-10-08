@@ -1,0 +1,605 @@
+/* =====================================================================
+   Digital Museum Research Project
+   Phase 3 - Static Prototype
+   css/style.css
+
+   Source: /System Design/CSS Style.docx
+   Covers (CSS Style.docx > "CSS File Structure"): Reset & Base Styles,
+   Typography, Buttons, Artefact Grid (card appearance), Modal,
+   Transition Pages. Colour/typography and component "skin" live here;
+   page structure and grid/responsive positioning live in layout.css.
+
+   Adaptive Panel (Phase 5), Questionnaire Page (Phase 6), and
+   Error/Fallback Page (Phase 7) sections are stubbed at the bottom,
+   ready to be filled in as those pages are built - CSS Style.docx's
+   file structure lists them as sections of one stylesheet, not
+   separate files (matches the 2-file split agreed for this project).
+   ===================================================================== */
+
+/* ---------------------------------------------------------------------
+   Colour palette (CSS Style.docx > "Colour theme")
+   --------------------------------------------------------------------- */
+:root {
+    --color-charcoal:     #2E2E2E; /* header text, titles, modal titles */
+    --color-off-white:    #F7F7F5; /* background */
+    --color-sand:         #D8D2C4; /* section backgrounds, card hover */
+    --color-sand-hover:   #CFC8B8; /* secondary button hover */
+    --color-bronze:       #8C6E4E; /* accent - buttons, borders, highlights */
+    --color-bronze-hover: #7A5F42; /* primary button hover - slightly darker bronze */
+    --color-blue-grey:    #6A7A8C; /* link colour */
+    --color-serendipity:  #C4D7E0; /* adaptive panel borders only - Phase 5 */
+    --color-white:        #FFFFFF;
+    --color-error:        #B3261E;
+
+    --shadow-modal: 0 4px 24px rgba(0, 0, 0, 0.1); /* soft, museum-style */
+
+    --font-family: 'Inter', 'Roboto', 'Helvetica Neue', Arial, sans-serif;
+}
+
+/* ---------------------------------------------------------------------
+   Reset & Base Styles
+   --------------------------------------------------------------------- */
+*, *::before, *::after {
+    box-sizing: border-box;
+}
+
+html, body {
+    margin: 0;
+    padding: 0;
+}
+
+body {
+    font-family: var(--font-family);
+    background-color: var(--color-off-white);
+    color: var(--color-charcoal);
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+}
+
+img {
+    max-width: 100%;
+    display: block;
+}
+
+a {
+    color: var(--color-blue-grey);
+}
+
+/* Visible focus outline everywhere - Wireframes.docx > "Accessible" */
+:focus-visible {
+    outline: 3px solid var(--color-blue-grey);
+    outline-offset: 2px;
+}
+
+/* ---------------------------------------------------------------------
+   Typography (CSS Style.docx > "Typography")
+   --------------------------------------------------------------------- */
+h1 {
+    font-size: 30px;
+    font-weight: 600;
+    color: var(--color-charcoal);
+    margin: 0 0 8px;
+}
+
+h2 {
+    font-size: 21px;
+    font-weight: 600;
+    color: var(--color-charcoal);
+    margin: 0 0 8px;
+}
+
+p {
+    font-size: 17px;
+    font-weight: 400;
+    margin: 0 0 12px;
+}
+
+.text-small {
+    font-size: 14px;
+    color: var(--color-charcoal);
+    opacity: 0.75;
+}
+
+/* ---------------------------------------------------------------------
+   Buttons (CSS Style.docx > "Buttons")
+   --------------------------------------------------------------------- */
+button, .btn {
+    font-family: var(--font-family);
+    font-size: 18px;
+    font-weight: 500;
+    border: none;
+    border-radius: 6px;
+    cursor: pointer;
+    min-height: 44px; /* large tap target - CSS Style.docx > Accessibility */
+}
+
+/* Primary button */
+.btn-primary,
+.researcher-setup__form button,
+.nav-card--primary {
+    background-color: var(--color-bronze);
+    color: var(--color-white);
+    padding: 12px 24px;
+}
+.btn-primary:hover,
+.researcher-setup__form button:hover,
+.nav-card--primary:hover {
+    background-color: var(--color-bronze-hover);
+}
+
+/* Secondary button */
+.btn-secondary,
+.modal-box__close-btn,
+.nav-link {
+    background-color: var(--color-sand);
+    color: var(--color-charcoal);
+    padding: 12px 24px;
+    text-decoration: none;
+    display: inline-block;
+}
+.btn-secondary:hover,
+.modal-box__close-btn:hover,
+.nav-link:hover {
+    background-color: var(--color-sand-hover);
+}
+
+/* ---------------------------------------------------------------------
+   Researcher setup (index.php only - not part of the pure wireframe,
+   kept visually distinct/minimal so it doesn't compete with the
+   participant-facing area below it)
+   --------------------------------------------------------------------- */
+.researcher-setup {
+    background-color: var(--color-sand);
+    padding: 10px 20px;
+    font-size: 14px;
+}
+.researcher-setup__label {
+    margin: 0 0 6px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.04em;
+    font-size: 12px;
+}
+.researcher-setup--active {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    flex-wrap: wrap;
+    gap: 12px;
+}
+.researcher-setup--active .researcher-setup__label {
+    text-transform: none;
+    letter-spacing: normal;
+    font-weight: 400;
+    margin: 0;
+}
+.researcher-setup__end-form {
+    margin: 0;
+}
+/* Deliberately understated - a filled/red button here would draw a
+   participant's eye. Outline only, muted until hovered, small type,
+   explicit "researcher only" label + title tooltip as the real
+   safeguard (CSS Style.docx pattern: colour signals state, text
+   carries the meaning). */
+.end-session-btn {
+    background: none;
+    border: 1px solid var(--color-bronze);
+    color: var(--color-charcoal);
+    font-size: 11px;
+    font-weight: 500;
+    padding: 4px 10px;
+    min-height: auto;
+    border-radius: 4px;
+    opacity: 0.65;
+}
+.end-session-btn:hover,
+.end-session-btn:focus-visible {
+    opacity: 1;
+    background-color: var(--color-sand-hover);
+    border-color: var(--color-error);
+    color: var(--color-error);
+}
+.researcher-setup__form input,
+.researcher-setup__form select {
+    font-family: var(--font-family);
+    font-size: 14px;
+    padding: 8px 10px;
+    border: 1px solid var(--color-bronze);
+    border-radius: 4px;
+    margin-right: 8px;
+}
+.researcher-setup__form label {
+    font-size: 12px;
+    margin-right: 4px;
+}
+.form-errors {
+    color: var(--color-error);
+    font-size: 13px;
+    margin: 0 0 8px;
+    padding-left: 18px;
+}
+
+/* ---------------------------------------------------------------------
+   Nav cards (index.php's 3 main buttons, reused by transition pages'
+   "Continue to..." button)
+   --------------------------------------------------------------------- */
+.nav-card {
+    display: inline-block; /* on index.php the grid auto-blockifies this anyway;
+        this is what actually matters for the transition pages, where the
+        "Continue to..." button sits alone (not in a grid/flex) - without it,
+        the <a> stays inline and margin-top below is silently ignored,
+        so the button's padding overlaps the paragraph above it */
+    background-color: var(--color-white);
+    border: 1px solid var(--color-sand);
+    border-radius: 8px;
+    padding: 20px;
+    text-decoration: none;
+    color: var(--color-charcoal);
+}
+.nav-card__title {
+    display: block;
+    font-size: 20px;
+    font-weight: 600;
+    color: var(--color-bronze);
+    margin-bottom: 6px;
+}
+.nav-card__description {
+    display: block;
+    font-size: 15px;
+    color: var(--color-charcoal);
+}
+.nav-card:not(.nav-card--disabled):hover {
+    background-color: var(--color-sand);
+}
+.nav-card--disabled {
+    opacity: 0.5;
+    pointer-events: none;
+    cursor: not-allowed;
+}
+.nav-card--primary {
+    text-align: center;
+    font-size: 18px;
+    font-weight: 500;
+}
+
+/* ---------------------------------------------------------------------
+   Artefact card appearance (CSS Style.docx > "Artefact Grid" section -
+   card visuals; the grid's column layout lives in layout.css)
+   --------------------------------------------------------------------- */
+.artefact-card {
+    font-family: var(--font-family);
+    background-color: var(--color-white);
+    border: 1px solid var(--color-sand);
+    border-radius: 8px;
+    padding: 12px;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color 0.15s ease; /* hover only - no other animation */
+}
+.artefact-card:hover {
+    background-color: var(--color-sand);
+}
+.artefact-card__image {
+    width: 100%;
+    aspect-ratio: 4 / 3;
+    object-fit: contain; /* was cover - contain shows the full artefact
+        instead of cropping portrait images to fit the landscape frame */
+    background-color: var(--color-off-white); /* letterbox fill so
+        contain doesn't leave bare white gaps beside portrait images */
+    border-radius: 4px;
+    margin-bottom: 8px;
+}
+.artefact-card__title {
+    display: block;
+    font-size: 16px;
+    font-weight: 600;
+    color: var(--color-charcoal);
+}
+.artefact-card__subtheme {
+    display: block;
+    font-size: 13px;
+    color: var(--color-blue-grey);
+}
+
+/* ---------------------------------------------------------------------
+   Modal (CSS Style.docx > "Modal": max-width 700-900px, padding
+   24-32px, white background, soft drop shadow)
+   --------------------------------------------------------------------- */
+.modal-box {
+    background-color: var(--color-white);
+    box-shadow: var(--shadow-modal);
+    padding: 28px;
+    border-radius: 10px;
+}
+.modal-box__close {
+    background: none;
+    border: none;
+    font-size: 28px;
+    line-height: 1;
+    color: var(--color-charcoal);
+    cursor: pointer;
+    min-height: auto;
+    padding: 4px 8px;
+}
+.modal-box__image {
+    width: 100%;
+    height: 360px; /* fixed, not max-height - object-fit needs a definite
+        box to fit the image into. max-height alone left the box's
+        "auto" height resolved from the image's own aspect ratio in some
+        cases, so contain had nothing reliable to letterbox against and
+        portrait images still rendered cropped. */
+    object-fit: contain; /* was cover - contain shows the whole artefact
+        (incl. portrait images) instead of cropping to fill the box */
+    background-color: var(--color-off-white); /* letterbox fill for
+        portrait images that don't fill the full width */
+    border: 1px solid var(--color-sand); /* subtle frame around the
+        letterboxed area, so empty space beside portrait images reads as
+        an intentional mat rather than a layout glitch */
+    border-radius: 6px;
+    margin-bottom: 16px;
+}
+.modal-box__meta {
+    font-size: 14px;
+    color: var(--color-blue-grey);
+    font-weight: 500;
+}
+#modalDescription {
+    font-size: 17px; /* CSS Style.docx > "Modal description: 17px" */
+}
+.modal-box__external-id {
+    font-size: 13px;
+    color: var(--color-charcoal);
+    opacity: 0.7;
+}
+.modal-box__source-link {
+    font-size: 13px;
+    display: inline-block;
+    margin-bottom: 16px;
+}
+
+/* Debug-only countdown (static.php/adaptive.php footer) - timing checks
+   confirmed accurate as of Phase 9, so hidden from participants to avoid
+   influencing behaviour. The underlying JS timer (secondsRemaining calc,
+   freeze/redirect logic, console logs) is untouched - only the visible
+   text is hidden here. Element still exists in the DOM with aria-hidden. */
+.version-footer__timer {
+    display: none;
+    margin-top: 8px;
+    font-size: 12px;
+    font-variant-numeric: tabular-nums;
+    color: var(--color-blue-grey);
+    opacity: 0.7;
+}
+.modal-box__close-btn {
+    margin-top: 8px;
+}
+
+/* ---------------------------------------------------------------------
+   Transition pages (CSS Style.docx > "Transition Pages")
+   --------------------------------------------------------------------- */
+.transition-message {
+    text-align: center;
+}
+.transition-message .nav-card--primary {
+    margin-top: 20px;
+}
+
+/* =======================================================================
+   ADAPTIVE PANEL - Phase 5
+   CSS Style.docx > "Adaptive Panel": background #F7F7F5, border-left
+   3px solid var(--color-serendipity), no animations/movement/flashing.
+   Panel/slot sizing and positioning live in layout.css - this section is
+   colour, spacing, and the slot's internal thumbnail/text arrangement
+   (same style.css/layout.css split already used for .artefact-grid vs
+   .artefact-card, and .modal-box, above).
+   ======================================================================= */
+.adaptive-panel {
+    background-color: var(--color-off-white);
+    border-left: 3px solid var(--color-serendipity);
+    padding: 20px;
+}
+.adaptive-panel__header {
+    font-size: 19px;
+    margin: 0 0 2px;
+}
+.adaptive-panel__subheader {
+    font-size: 13px;
+    color: var(--color-blue-grey);
+    margin: 0 0 16px;
+}
+.adaptive-panel__empty {
+    font-size: 14px;
+    font-style: italic;
+    opacity: 0.65;
+    margin: 0;
+}
+
+/* Each slot: small thumbnail left, title + subtheme stacked right
+   (Wireframes.docx > Adaptive Panel > "small thumbnail, title,
+   theme/sub-theme"). The explicit [hidden] rule matters: .adaptive-panel__slot
+   below sets display:grid at the same specificity as the browser's
+   built-in [hidden] { display:none } rule, so without this, a still-empty
+   slot (rendered with the hidden attribute by adaptive.php) would
+   incorrectly show through. */
+.adaptive-panel__slot {
+    display: grid;
+    grid-template-columns: 56px 1fr;
+    column-gap: 12px;
+    row-gap: 2px;
+    width: 100%;
+    background-color: var(--color-white);
+    border: 1px solid var(--color-sand);
+    border-radius: 8px;
+    padding: 10px;
+    text-align: left;
+    font-family: var(--font-family);
+    cursor: pointer;
+    transition: background-color 0.15s ease; /* hover only - same as .artefact-card */
+}
+.adaptive-panel__slot[hidden] {
+    display: none;
+}
+.adaptive-panel__slot:hover {
+    background-color: var(--color-sand);
+}
+.adaptive-panel__slot-image {
+    grid-row: 1 / 3;
+    grid-column: 1;
+    width: 56px;
+    height: 56px;
+    object-fit: cover;
+    border-radius: 6px;
+    transition: opacity 0.6s ease; /* Adaptive Logic.docx > "Soft transitions -
+        thumbnails fade gently when updated" */
+}
+.adaptive-panel__slot-title {
+    grid-row: 1;
+    grid-column: 2;
+    align-self: end;
+    font-size: 14px;
+    font-weight: 600;
+    color: var(--color-charcoal);
+}
+.adaptive-panel__slot-subtheme {
+    grid-row: 2;
+    grid-column: 2;
+    align-self: start;
+    font-size: 12px;
+    color: var(--color-blue-grey);
+}
+
+/* js/adaptive_engine.js toggles this for 600ms after refreshing a slot's
+   content - the only visual "movement" a panel update ever gets
+   (Adaptive Logic.docx > "No animations... no flashing, bouncing, or
+   sliding", but "Soft transitions... thumbnails fade gently when
+   updated"). */
+.adaptive-panel__slot--updating .adaptive-panel__slot-image {
+    opacity: 0.35;
+}
+
+/* adaptive.php's timeout freeze callback (final 30s before timeout) adds
+   this - Adaptive Logic.docx > "Timeout Protection". Deliberately subtle
+   - no banner or text change, so it doesn't draw attention to itself. */
+.adaptive-panel--frozen {
+    opacity: 0.85;
+}
+
+/* =======================================================================
+   QUESTIONNAIRE PAGE - Phase 6
+   Native PHP/HTML form, not the embedded Microsoft Form iframe
+   Wireframes.docx originally described - see the design-deviation note
+   at the top of questionnaire.php. Styled to match the rest of the
+   site (same fieldset/input treatment as .researcher-setup__form)
+   rather than the "iframe filling the page" look the wireframe called
+   for, since there's no external form to embed any more.
+   ======================================================================= */
+.questionnaire-header__subtitle {
+    max-width: 600px;
+    margin: 0 auto 4px;
+}
+
+.questionnaire-section__title {
+    margin-top: 32px;
+    padding-top: 16px;
+    border-top: 1px solid var(--color-sand);
+}
+.questionnaire-form > .questionnaire-section__title:first-child {
+    margin-top: 0;
+    padding-top: 0;
+    border-top: none;
+}
+
+.questionnaire-item {
+    border: none;
+    padding: 0;
+    margin: 0 0 24px;
+}
+.questionnaire-item__text {
+    font-size: 17px;
+    font-weight: 500;
+    padding: 0;
+    margin-bottom: 10px;
+}
+.questionnaire-item__text .text-small {
+    font-weight: 400;
+    margin-left: 4px;
+}
+
+.questionnaire-item__choices {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+.questionnaire-item__choice {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 15px;
+    cursor: pointer;
+}
+
+.likert-scale {
+    display: flex;
+    align-items: center;
+    gap: 14px;
+}
+.likert-scale__label {
+    font-size: 12px;
+    color: var(--color-blue-grey);
+    max-width: 90px;
+}
+.likert-scale__label:first-child {
+    text-align: right;
+}
+.likert-scale__option {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 4px;
+    font-size: 13px;
+    cursor: pointer;
+}
+
+.questionnaire-item__textarea {
+    width: 100%;
+    font-family: var(--font-family);
+    font-size: 15px;
+    padding: 10px 12px;
+    border: 1px solid var(--color-bronze);
+    border-radius: 4px;
+    resize: vertical;
+}
+
+.questionnaire-actions {
+    margin-top: 32px;
+    text-align: center;
+}
+
+.questionnaire-complete {
+    text-align: center;
+}
+.questionnaire-complete .nav-card--primary {
+    margin-top: 16px;
+}
+
+.questionnaire-errors {
+    margin-bottom: 20px;
+}
+
+.questionnaire-instructions {
+    text-align: center;
+    margin-top: 16px;
+}
+
+/* =======================================================================
+   ERROR / FALLBACK PAGE - Phase 7
+   Calm, minimal, single button - same visual language as the transition
+   pages (centred text, .nav-card--primary button) so a participant
+   hitting this screen doesn't feel like they've left the study.
+   ======================================================================= */
+.fallback-message {
+    text-align: center;
+}
+.fallback-message form {
+    margin-top: 20px;
+}

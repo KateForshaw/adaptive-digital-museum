@@ -1,0 +1,267 @@
+/* =====================================================================
+   Digital Museum Research Project
+   Phase 3 - Static Prototype
+   css/layout.css
+
+   Source: /System Design/CSS Style.docx
+   Page structure, header positioning, and the responsive artefact grid
+   layout. Loaded after style.css, so rules here take priority on any
+   overlap (e.g. spacing tweaks for a specific page).
+   ===================================================================== */
+
+/* ---------------------------------------------------------------------
+   Page shell - every page is a centred column, footer pinned to the
+   bottom of the viewport when content is short
+   --------------------------------------------------------------------- */
+body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
+}
+
+main {
+    flex: 1;
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px 40px;
+}
+
+/* ---------------------------------------------------------------------
+   Home page (index.php)
+   --------------------------------------------------------------------- */
+.home-header {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 40px 24px 24px;
+    text-align: center;
+}
+
+.home-nav__button-group {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 20px;
+    margin-bottom: 32px;
+}
+
+.home-instructions {
+    max-width: 600px;
+    margin: 0 auto;
+    text-align: center;
+}
+
+.home-footer {
+    max-width: 1100px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 24px;
+    text-align: center;
+    font-size: 13px;
+    opacity: 0.7;
+    border-top: 1px solid var(--color-sand);
+}
+.home-footer p {
+    margin: 0 0 4px;
+}
+
+/* ---------------------------------------------------------------------
+   Static / adaptive version pages - shared header + footer layout
+   (Wireframes.docx requires these to be identical between versions)
+   --------------------------------------------------------------------- */
+.version-header {
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 32px 24px 16px;
+    text-align: center;
+}
+
+.version-footer {
+    max-width: 1100px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 20px 24px;
+    text-align: center;
+    font-size: 14px;
+    border-top: 1px solid var(--color-sand);
+}
+.version-footer p {
+    margin: 0 0 10px;
+}
+
+/* ---------------------------------------------------------------------
+   Artefact grid (CSS Style.docx > "Grid": 3-4 column responsive grid,
+   20-24px gap; scrollable vertically, no reordering/dynamic updates)
+   --------------------------------------------------------------------- */
+.artefact-grid {
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 24px;
+}
+
+@media (max-width: 1000px) {
+    .artefact-grid { grid-template-columns: repeat(3, 1fr); }
+}
+@media (max-width: 720px) {
+    .artefact-grid { grid-template-columns: repeat(2, 1fr); }
+    .home-nav__button-group { grid-template-columns: 1fr; }
+}
+@media (max-width: 480px) {
+    .artefact-grid { grid-template-columns: 1fr; }
+}
+
+/* ---------------------------------------------------------------------
+   Modal overlay (dimmed backdrop, centred) - CSS Style.docx > "Modal"
+   --------------------------------------------------------------------- */
+.modal-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background-color: rgba(46, 46, 46, 0.5); /* dimmed charcoal backdrop */
+    align-items: center;
+    justify-content: center;
+    padding: 24px;
+    z-index: 100;
+}
+.modal-overlay.open {
+    display: flex;
+}
+.modal-box {
+    width: 100%;
+    max-width: 800px; /* CSS Style.docx > "Modal: Max width 700-900px" */
+    max-height: 90vh;
+    overflow-y: auto;
+}
+
+/* Locks background scrolling while the modal is open - hook set by
+   static.php/adaptive.php's openModal()/closeModal() */
+body.modal-open {
+    overflow: hidden;
+}
+
+/* ---------------------------------------------------------------------
+   Transition pages
+   --------------------------------------------------------------------- */
+.transition-header {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 40px 24px 16px;
+    text-align: center;
+}
+.transition-message {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+.transition-footer {
+    max-width: 700px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 24px;
+    text-align: center;
+    font-size: 14px;
+    opacity: 0.8;
+}
+.transition-footer p {
+    margin: 0 0 4px;
+}
+
+/* =======================================================================
+   ADAPTIVE PANEL - Phase 5
+   Right-side panel, sits alongside the artefact grid without changing
+   the grid's own layout (Wireframes.docx > "Grid must be identical to
+   the static version"). Stacks below the grid on narrow screens
+   (Wireframes.docx > Adaptive Panel > "Or bottom - mobile-friendly
+   alternative"). Panel colour/border/slot skin lives in style.css - see
+   that file for why the split follows .artefact-grid/.artefact-card.
+   ======================================================================= */
+.adaptive-layout {
+    flex: 1;
+    width: 100%;
+    max-width: 1100px;
+    margin: 0 auto;
+    padding: 0 24px 40px;
+    display: flex;
+    align-items: flex-start;
+    gap: 24px;
+}
+
+/* .artefact-grid's own display:grid/gap (above) still applies unchanged -
+   this just hands the page's max-width/centring/padding over to
+   .adaptive-layout, since <main> is no longer a direct child of <body>
+   on adaptive.php the way it is on static.php. */
+.adaptive-layout .artefact-grid {
+    flex: 1;
+    min-width: 0; /* lets the grid shrink properly inside the flex row instead of overflowing */
+    width: auto;
+    max-width: none;
+    margin: 0;
+    padding: 0;
+}
+
+.adaptive-panel {
+    flex: 0 0 320px; /* CSS Style.docx > Adaptive Panel > "Width: 300-350px" */
+    position: sticky;
+    top: 24px; /* stays visible while the grid scrolls, rather than being
+        left behind - doesn't reorder or resize the grid itself */
+}
+
+.adaptive-panel__slots {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+@media (max-width: 900px) {
+    .adaptive-layout {
+        flex-direction: column;
+    }
+    .adaptive-panel {
+        flex: 1 1 auto;
+        width: 100%;
+        position: static;
+    }
+}
+
+/* =======================================================================
+   QUESTIONNAIRE PAGE - Phase 6
+   Single centred column - a form to read top-to-bottom, not the wide
+   iframe well the original wireframe assumed (see questionnaire.php's
+   design-deviation note).
+   ======================================================================= */
+.questionnaire-main {
+    max-width: 640px;
+    margin: 0 auto;
+    padding: 0 24px 40px;
+    width: 100%;
+}
+
+/* =======================================================================
+   ERROR / FALLBACK PAGE - Phase 7
+   Simple centred layout, single button - deliberately reuses the same
+   proportions as the transition pages above (.transition-header/
+   .transition-message/.transition-footer) so the fallback screen reads
+   as "part of the study", not a broken/unstyled error page.
+   ======================================================================= */
+.fallback-header {
+    max-width: 700px;
+    margin: 0 auto;
+    padding: 40px 24px 16px;
+    text-align: center;
+}
+.fallback-message {
+    max-width: 500px;
+    margin: 0 auto;
+    padding: 0 24px;
+}
+.fallback-footer {
+    max-width: 700px;
+    margin: 0 auto;
+    width: 100%;
+    padding: 24px;
+    text-align: center;
+    font-size: 14px;
+    opacity: 0.8;
+}
+.fallback-footer p {
+    margin: 0 0 4px;
+}

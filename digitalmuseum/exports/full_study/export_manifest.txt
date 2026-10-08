@@ -1,0 +1,20 @@
+Digital Museum full-study export
+Generated: 2026-08-25 09:07:02
+
+Participants matched: 30 / expected 30
+All expected ppt1-ppt30 codes were found.
+Sessions in scope: 30
+Wrote session_log.csv - 30 row(s)
+Wrote event_log.csv - 8928 row(s)
+Wrote timeout.csv - 62 row(s)
+Wrote adaptive_event.csv - 3590 row(s)
+Wrote adaptive_suggestion.csv - 2748 row(s)
+Wrote questionnaire_response.csv - 362 row(s)
+Wrote questionnaire_item.csv - 14 row(s)
+Wrote participant.csv - 30 row(s)
+Wrote study_condition.csv - 2 row(s)
+Wrote adaptive_rule.csv - 27 row(s)
+Wrote artefact.csv - 60 row(s)
+Wrote theme.csv - 2 row(s)
+Wrote subtheme.csv - 12 row(s)
+Wrote session_completeness_summary.csv - 30 row(s), 0 flagged as not fully complete
