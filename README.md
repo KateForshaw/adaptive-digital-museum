@@ -25,8 +25,8 @@ This was my research project for my Data Analytics MSc. It asked whether real-ti
 ## Files
 | File | Description |
 |------|-------------|
-| `DC25259628final.docx` | Final project report |
-| `DC25259628appendices.docx` | Appendices: design diagrams, data dictionary, rule specifications, test results, analysis outputs and ethics documents |
+| `DC25259628final.pdf` | Final project report |
+| `DC25259628appendices.pdf` | Appendices: design diagrams, data dictionary, rule specifications, test results, analysis outputs and ethics documents |
 | `digitalmuseum_database.sql` | MySQL script to create the database with the artefact metadata, themes, adaptive rules and questionnaire items (participant data not included) |
 | `Artefact Metadata.xlsx` | Curated metadata for the 60 artefacts |
 | `Digital Museum Research Poster.png` | Research poster summarising the project's aims, method and key findings |
